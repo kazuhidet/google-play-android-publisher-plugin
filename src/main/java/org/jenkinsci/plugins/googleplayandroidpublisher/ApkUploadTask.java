@@ -79,6 +79,10 @@ class ApkUploadTask extends TrackPublisherTask<Boolean> {
 
         // Get the list of existing APKs and their info
         final List<Apk> existingApks = editService.apks().list(applicationId, editId).execute().getApks();
+	if ( existingApks == null ) {
+	    logger.println("App release track is empty!");
+	}
+	else
         for (Apk apk : existingApks) {
             existingVersionCodes.add(apk.getVersionCode());
         }
@@ -97,6 +101,7 @@ class ApkUploadTask extends TrackPublisherTask<Boolean> {
             logger.println(String.format(" minSdkVersion: %s", metadata.getMinSdkVersion()));
 
             // Check whether this APK already exists on the server (i.e. uploading it would fail)
+	    if ( existingApks != null )
             for (Apk apk : existingApks) {
                 if (apk.getBinary().getSha1().toLowerCase(Locale.ENGLISH).equals(apkSha1Hash)) {
                     logger.println();
